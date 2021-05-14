@@ -1,29 +1,22 @@
 package JUnit;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 class Analyzer {
     private ArrayList<String> testPassed = new ArrayList<>();
     private HashMap<String, String> testFailed = new HashMap<>();
     private HashMap<String, String> classFailed = new HashMap<>();
-
     private static final String UNEXPECTED_EXCEPTION_ERROR_MESSAGE = "Incorrect exception, expected: \"%1$s\", current: \"%2$s\".";
     private static final String EXCEPTION_WASNT_THROWN_BUT_SHOULD_BE = "The following exception wasn't thrown: \"%1$s\", but should be.";
-
     public ArrayList<String> getTestPassed() {
         return testPassed;
     }
-
     public HashMap<String, String> getTestFailed() {
         return testFailed;
     }
-
     public HashMap<String, String> getClassFailed() {
         return classFailed;
     }
-
     public void analyze(Class<?> clazz) {
         Object instance = null;
         try {
@@ -33,10 +26,8 @@ class Analyzer {
             classFailed.put(clazz.getName(), e.getMessage());
             return;
         }
-
         runTests(instance, clazz.getMethods());
     }
-
     private ArrayList<Method> getMethodsOfAnnotationType(Method[] methods, Class classType) {
         ArrayList<Method> result = new ArrayList<Method>();
         for (Method method : methods) {
@@ -44,10 +35,8 @@ class Analyzer {
                 result.add(method);
             }
         }
-
         return result;
     }
-
     private void processBeforeOrAfter(Object instance, ArrayList<Method> methods) throws Throwable {
         for (Method method : methods) {
              try {
@@ -56,13 +45,10 @@ class Analyzer {
                 throw e.getCause();
              }
         }
-
     }
-
     private void runTests(Object instance, Method[] methods) {
         ArrayList<Method> methodsBefore = getMethodsOfAnnotationType(methods, Before.class);
         ArrayList<Method> methodsAfter = getMethodsOfAnnotationType(methods, After.class);
-
         for (Method method : methods) {
             if (method.isAnnotationPresent(Test.class)) {
                 try { //before
@@ -71,7 +57,6 @@ class Analyzer {
                     testFailed.put(method.getName(), e.getMessage());
                     continue;
                 }
-
                 boolean alreadyFailed = false;
                 try {
                     method.invoke(instance);
